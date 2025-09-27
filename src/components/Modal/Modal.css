@@ -1,0 +1,111 @@
+/* Модальное окно */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 80vw;
+  max-width: 1200px;
+  max-height: 90vh;        /* ← важно! */
+  height: auto;            /* не фиксировать высоту */
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;        /* ← скрывает всё, что вылезает */
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  color: black;
+}
+
+/* 🔥 Основное тело модалки: canvas + info */
+.modal-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  max-height: 100%; /* ← относительно .modal-content */
+  overflow: hidden; /* ← тоже важно */
+}
+
+.modal-canvas-wrapper {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  padding: 20px;
+  overflow: hidden; /* ← обрезать, если что-то вылезет */
+  max-height: 100%; /* ← не давать расти выше .modal-body */
+}
+
+.modal-canvas-wrapper canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+/* Информация справа */
+.modal-info {
+  flex: 1;
+  padding: 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-info h2 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.modal-info p {
+  line-height: 1.6;
+  color: #555;
+}
+
+.modal-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.modal-controls button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.modal-controls button:hover {
+  background: #0056b3;
+}
