@@ -1,41 +1,97 @@
-import { useState, useMemo } from 'react'
-
+import { useState, useMemo, useEffect, useRef } from 'react'
 import './App.css'
 
-let items: number[] = Array.from(Array(50).keys());
-
-const SIZE_CLASSES = ['', 'wide', 'tall', 'big'];
-const WEIGHTS = [60, 15, 15, 10]; // сумма = 100
-
-const getRandomSizeClass = () => {
-  const rand = Math.random() * 100;
-  let sum = 0;
-  for (let i = 0; i < WEIGHTS.length; i++) {
-    sum += WEIGHTS[i];
-    if (rand < sum) return SIZE_CLASSES[i];
-  }
-  return '';
-};
-
-
-
-function App() { 
-    // Генерируем классы один раз и сохраняем
-  const itemsWithSizes = useMemo(() => {
-    return items.map(item => ({
-      ...item,
-      sizeClass: getRandomSizeClass()
-    }));
-  }, [items]); // перегенерируется только если `items` изменились 
+function App() {
   return (
-    <div className='Gallery'>
-      {items.map((_,i) => (<GalleryItem key={i}/>))}
+    <div className='container'>
+      <Gallery />
     </div>
   )
 }
 
-function GalleryItem (){
-  return (<div className='Gallery-Item'></div>)
+function Gallery() {
+  // Общее количество элементов
+  const totalItems = 50
+
+  // Генерируем элементы с меткой isBig
+  const items = useMemo(() => {
+    const arr = Array.from({ length: totalItems }, (_, i) => ({ id: i }))
+
+    // Копируем индексы, которые могут быть "большими"
+    // Запрещаем большие карточки в последних 4 позициях (2 колонки × 2 строки)
+    const maxIndexForBig = totalItems - 5 // чтобы осталось минимум 4 элемента после
+
+    const bigCandidates: number[] = []
+    for (let i = 0; i <= maxIndexForBig; i++) {
+      // Пример: ~15% шанс стать большой, но не чаще чем каждые 6 элементов
+      if (Math.random() < 0.15) {
+        bigCandidates.push(i)
+        // Пропускаем следующие 5, чтобы не было пересечений
+        i += 5
+      }
+    }
+
+    // Помечаем выбранные как большие
+    for (const idx of bigCandidates) {
+      arr[idx] = { ...arr[idx], isBig: true }
+    }
+
+    return arr
+  }, [totalItems])
+
+  return (
+    <div className='gallery'>
+      {items.map((item) => (
+        <GalleryItem key={item.id} item={item} />
+      ))}
+    </div>
+  )
 }
 
-export default App;
+function GalleryItem({ item }) {
+  const isBig = item.isBig || false
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const parent = canvas.parentElement
+    if (!parent) return
+
+    // Получаем размеры родителя (gallery__content)
+    const size = parent.clientWidth
+
+    // Устанавливаем физические размеры канваса (в пикселях)
+    canvas.width = size
+    canvas.height = size
+
+    // Опционально: нарисовать что-нибудь (например, цветной квадрат)
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      // Пример: залить случайным цветом
+      const hue = (item.id * 137) % 360 // детерминированный "рандом"
+      ctx.fillStyle = `hsl(${hue}, 70%, 60%)`
+      ctx.fillRect(0, 0, size, size)
+
+      // Добавить номер (опционально)
+      ctx.fillStyle = 'white'
+      ctx.font = 'bold 24px sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText(String(item.id), size / 2, size / 2)
+    }
+  }, [item.id, isBig]) // зависимость от isBig на случай, если размеры меняются
+
+  return (
+    <div className={`gallery__item ${isBig ? 'big' : ''}`}>
+      <div className="gallery__content">
+        <canvas ref={canvasRef} />
+        <h2 className='title'>Card Title</h2>
+        <h3 className='description'>Card Description</h3>
+      </div>
+    </div>
+  )
+}
+
+export default App
