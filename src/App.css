@@ -1,0 +1,45 @@
+#root {
+    display: flex;
+    background-color: bisque;
+    min-height: 100vh;
+}
+
+
+.Gallery {
+    padding: 20px;
+    background-color: aqua;
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(180px, 25vw, 320px), 1fr));
+    
+    gap: 20px;
+}
+
+.Gallery-Item {
+  background: gray;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 3 / 4;
+}
+
+
+
+  /* Вариации */
+  .card.wide {
+    grid-column: span 2;
+    aspect-ratio: 4 / 3; /* широкая — горизонтальная */
+  }
+
+  .card.tall {
+    grid-row: span 2;
+    aspect-ratio: 2 / 5; /* ещё выше! */
+  }
+
+  .card.big {
+    grid-column: span 2;
+    grid-row: span 2;
+    aspect-ratio: 1 / 1.4; /* прямоугольник, но не квадрат */
+    }
