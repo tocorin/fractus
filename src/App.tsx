@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
 import './App.css'
 
 function App() {
@@ -9,13 +9,22 @@ function App() {
   )
 }
 
+type ItemType = {
+  id: number,
+  isBig: boolean
+}
+
+type GalleryItemProps = {
+  item: ItemType
+}
+
 function Gallery() {
   // Общее количество элементов
   const totalItems = 50
 
   // Генерируем элементы с меткой isBig
   const items = useMemo(() => {
-    const arr = Array.from({ length: totalItems }, (_, i) => ({ id: i }))
+    const arr: ItemType[] = Array.from({ length: totalItems }, (_, i) => ({ id: i, isBig: false }))
 
     // Копируем индексы, которые могут быть "большими"
     // Запрещаем большие карточки в последних 4 позициях (2 колонки × 2 строки)
@@ -48,7 +57,7 @@ function Gallery() {
   )
 }
 
-function GalleryItem({ item }) {
+function GalleryItem({ item }: GalleryItemProps) {
   const isBig = item.isBig || false
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
